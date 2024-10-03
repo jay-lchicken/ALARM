@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Countdown Timer with Milliseconds</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #87CEEB; /* Soft sky blue background */
+            font-family: 'Arial', sans-serif;
+        }
+        .timer-container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .time {
+            display: inline-block;
+            margin: 0 15px;
+        }
+        .time-number {
+            font-size: 3rem;
+            color: #333333;
+            margin-bottom: 5px;
+        }
+        .time-label {
+            font-size: 1rem;
+            color: #999999;
+        }
+        input[type="text"], button {
+            padding: 10px;
+            margin-top: 20px;
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        @keyframes flashRed {
+            0% { background-color: #87CEEB; }
+            50% { background-color: red; }
+            100% { background-color: #87CEEB; }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <input type="text" id="timeInput" placeholder="Enter time in seconds">
+        <button id="startBtn" onclick="startTimer()">Start</button>
+        <button onclick="stopTimer()">Stop</button>
+        <button onclick="resetTimer()">Reset</button>
+        <br>
+        <br>
+        <div class="time">
+            <div class="time-number" id="hours">00</div>
+            <div class="time-label">Hours</div>
+        </div>
+        <div class="time">
+            <div class="time-number" id="minutes">00</div>
+            <div class="time-label">Minutes</div>
+        </div>
+        <div class="time">
+            <div class="time-number" id="seconds">00</div>
+            <div class="time-label">Seconds</div>
+        </div>
+        <div class="time">
+            <div class="time-number" id="milliseconds">000</div>
+            <div class="time-label">Milliseconds</div>
+        </div>
+    </div>
+    <audio id = "alarmSound" src = "alarm.wav"></audio>
+    <script>
+        let timer = null;
+    
+        function startTimer() {
+            const timeInput = document.getElementById('timeInput');
+            let duration = parseInt(timeInput.value) * 1000; // convert seconds to milliseconds
+            if (isNaN(duration)) {
+                alert("Please enter a valid number");
+                return;
+            }
+            clearInterval(timer); // Clear existing timer
+            const endTime = Date.now() + duration;
+            timer = setInterval(() => updateTimer(endTime), 10); // Update every 10 milliseconds for smoother performance
+        }
+    
+        function updateTimer(endTime) {
+            const now = new Date().getTime();
+            const distance = endTime - now;
+            if (distance <= 0) {
+                clearInterval(timer);
+                setDisplay(0, 0, 0, 0);
+                playAlarm();
+                return;
+            }
+            const hours = Math.floor(distance / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const milliseconds = distance % 1000;
+            setDisplay(hours, minutes, seconds, milliseconds);
+        }
+    
+        function setDisplay(hours, minutes, seconds, milliseconds) {
+            document.getElementById("hours").textContent = pad(hours, 2);
+            document.getElementById("minutes").textContent = pad(minutes, 2);
+            document.getElementById("seconds").textContent = pad(seconds, 2);
+            document.getElementById("milliseconds").textContent = pad(milliseconds, 3);
+        }
+    
+        function playAlarm() {
+            const alarm = document.getElementById("alarmSound");
+            alarm.play();
+        }
+    
+        function stopTimer() {
+            alarm.pause();
+            clearInterval(timer);
+            stopAlarm();
+        }
+    
+        function resetTimer() {
+            clearInterval(timer);
+            document.getElementById("timeInput").value = '';
+            setDisplay(0, 0, 0, 0);
+            stopAlarm();
+        }
+    
+        function stopAlarm() {
+            const alarm = document.getElementById("alarmSound");
+            alarm.pause();
+            alarm.currentTime = 0; // Reset the audio position to the start
+        }
+    
+        function pad(num, size) {
+            let s = num.toString();
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+    </script>
+</body>
+</html>
