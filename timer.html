@@ -88,14 +88,14 @@
     
         function startTimer() {
             const timeInput = document.getElementById('timeInput');
-            let duration = parseInt(timeInput.value) * 1000; // convert seconds to milliseconds
+            let duration = parseInt(timeInput.value) * 1000; 
             if (isNaN(duration)) {
                 alert("Please enter a valid number");
                 return;
             }
-            clearInterval(timer); // Clear existing timer
+            clearInterval(timer);
             const endTime = Date.now() + duration;
-            timer = setInterval(() => updateTimer(endTime), 10); // Update every 10 milliseconds for smoother performance
+            timer = setInterval(() => updateTimer(endTime), 10); 
         }
     
         function updateTimer(endTime) {
@@ -142,7 +142,7 @@
         function stopAlarm() {
             const alarm = document.getElementById("alarmSound");
             alarm.pause();
-            alarm.currentTime = 0; // Reset the audio position to the start
+            alarm.currentTime = 0; 
         }
     
         function pad(num, size) {
